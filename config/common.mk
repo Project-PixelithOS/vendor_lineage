@@ -301,9 +301,38 @@ PRODUCT_PACKAGE_OVERLAYS += vendor/crowdin/overlay
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/lineage/build/target/product/security/lineage
 
+PRODUCT_PACKAGES += \
+    SystemUIClocks-BigNum \
+    SystemUIClocks-Calligraphy \
+    SystemUIClocks-Growth \
+    SystemUIClocks-Inflate \
+    SystemUIClocks-Metro \
+    SystemUIClocks-NumOverlap \
+    SystemUIClocks-Weather
+
+# Pixelith GMS (Clover-based): devices opt in with WITH_GMS := true.
+# Blobs from vendor/pixel (GitLab). Vanilla builds skip all of this.
+WITH_GMS ?= false
+ifeq ($(WITH_GMS),true)
+$(call inherit-product, vendor/pixel/gms/products/gms.mk)
+$(call inherit-product, vendor/pixel/sounds/products/sounds.mk)
+$(call inherit-product, vendor/pixel/launcher/products/launcher.mk)
+$(call inherit-product, vendor/pixel/themepicker/products/themepicker.mk)
+
+PRODUCT_PACKAGES += \
+    SettingsOverlayPixel
+
+# Don't dexpreopt prebuilts (for GMS).
+DONT_DEXPREOPT_PREBUILTS := true
+
+# Relax library check (for GMS prebuilts).
+RELAX_USES_LIBRARY_CHECK=true
+endif
+
 include vendor/lineage/config/version.mk
 
 -include vendor/lineage-priv/keys/keys.mk
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
 -include vendor/lineage/config/partner_gms.mk
+
